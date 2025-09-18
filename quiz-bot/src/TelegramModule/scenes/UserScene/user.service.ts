@@ -36,25 +36,32 @@ export class UserService {
   }
 
   async workWithAnswer(userId: number, ctx: TelegrafContext) {
-    const { stage, question, answer } = this.parseCallback(ctx);
-    const isCorrect = this._questionHelperService.check(
-      stage,
-      question,
-      answer,
-    );
-    const questionObject = this._questionHelperService.getQuestion(
-      stage,
-      question,
-    );
-    this._questionHelperService.saveQuestion(userId, stage, question, answer);
-    await ctx.deleteMessage(ctx.msgId);
-    await ctx.sendMessage(
-      `<code>${isCorrect ? '✅ Правильно!' : '😑 Неправильно'}</code>
+    try {
+      const { stage, question, answer } = this.parseCallback(ctx);
+      await ctx.deleteMessage(ctx.msgId);
+      const isCorrect = this._questionHelperService.check(
+        stage,
+        question,
+        answer,
+      );
+      const questionObject = this._questionHelperService.getQuestion(
+        stage,
+        question,
+      );
+      this._questionHelperService.saveQuestion(userId, stage, question, answer);
+
+      await ctx.sendMessage(
+        `<code>${isCorrect ? '✅ Правильно!' : '😑 Неправильно'}</code>
           
 ${questionObject?.solution.text}`,
-      {
-        parse_mode: 'HTML',
-      },
-    );
+        {
+          parse_mode: 'HTML',
+        },
+      );
+    } catch {
+      console.error(
+        `Пользователь ${userId} пытался ответить на вопрос, но не успел`,
+      );
+    }
   }
 }
