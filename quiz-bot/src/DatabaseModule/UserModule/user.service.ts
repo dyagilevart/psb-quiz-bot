@@ -13,8 +13,14 @@ export class UserService {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  getUser(userId: number) {
-    return this.userModel.findOne({ userId: userId });
+  async getUser(userId: number) {
+    return this.userModel.findOne({ userId: userId }).exec();
+  }
+
+  async getActiveUsers() {
+    return this.userModel
+      .find({ isAdmin: false, chatId: { $exists: true, $ne: null } })
+      .exec();
   }
 
   async setUser(createUserDto: CreateUserDto): Promise<User> {

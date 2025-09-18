@@ -8,8 +8,8 @@ export class User {
   @Prop({ required: true })
   userId: number;
 
-  @Prop()
-  name: string;
+  @Prop({ required: true })
+  chatId: number;
 
   @Prop({ default: false })
   isAdmin: boolean;

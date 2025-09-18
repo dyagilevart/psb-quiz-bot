@@ -4,7 +4,6 @@ import { Scene, SceneEnter, SceneLeave, Command, Action, Ctx, On, Hears } from '
 import { TelegrafContext } from 'src/common/interfaces/telegraf-context.interface';
 import { SceneEnum } from '../../types/scene.enum';
 import { HelloController } from './controller/hello.controller';
-import { UserMenu } from 'src/TelegramModule/types/userMenu.type';
 
 
 @Scene(SceneEnum.USER_CONSOLE)
@@ -17,11 +16,6 @@ export class UserScene {
     @SceneLeave()
     onSceneLeave() {
         console.log('Leave from scene');
-    }
-
-    @Hears(UserMenu.MAKE_AN_APPOINTMENT)
-    makeAnAppointment(ctx: TelegrafContext) {
-        ctx.scene.enter(SceneEnum.APPOINTMENT);
     }
 
     @Command('leave')

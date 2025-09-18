@@ -1,4 +1,3 @@
-import { AppointmentService } from './TelegramModule/scenes/Stage1/appointment.service';
 import { BusinessModule } from './BusinessModule/business.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';

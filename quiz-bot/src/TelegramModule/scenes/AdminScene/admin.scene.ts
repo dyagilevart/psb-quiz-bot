@@ -9,6 +9,7 @@ import {
 import { TelegrafContext } from 'src/common/interfaces/telegraf-context.interface';
 import { SceneEnum } from '../../types/scene.enum';
 import { AdminService } from './admin.service';
+import { MenuEnum } from './types/menu';
 
 @Scene(SceneEnum.ADMIN_CONSOLE)
 export class AdminScene {
@@ -26,8 +27,13 @@ export class AdminScene {
   }
 
   @On('callback_query')
-  onCreateASchedule(): number {
-    return Math.floor(Math.random() * 11);
+  onCallback(ctx: TelegrafContext) {
+    if (this._adminService.parseCallback(ctx) === MenuEnum.START) {
+      this._adminService.start(ctx);
+    }
+    if (this._adminService.parseCallback(ctx) === MenuEnum.STOP) {
+      this._adminService.stop();
+    }
   }
 
   @Command('leave')

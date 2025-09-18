@@ -20,6 +20,7 @@ export class AdminService {
           'Вы в консоли администратора. Выберите действие',
           Markup.inlineKeyboard([
             Markup.button.callback('Start', Action.START),
+            Markup.button.callback('Stop', Action.STOP),
           ]),
         );
       }

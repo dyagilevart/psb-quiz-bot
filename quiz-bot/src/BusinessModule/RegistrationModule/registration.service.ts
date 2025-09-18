@@ -14,6 +14,6 @@ export class RegistrationService {
   }
 
   async register(user: UserDto) {
-    return this.userService.setUser({ userId: user.id});
+    return this.userService.setUser({ userId: user.id, chatId: user.chatId});
   }
 }

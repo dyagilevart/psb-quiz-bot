@@ -10,22 +10,20 @@ import { sessionMiddleware } from './middleware/session.middleware';
 import { BusinessModule } from 'src/BusinessModule/business.module';
 import { AdminScene } from './scenes/AdminScene/admin.scene';
 import { UserScene } from './scenes/UserScene/user.scene';
-import { AppointmentService } from './scenes/Stage1/appointment.service';
-import { AppointmentScene } from './scenes/Stage1/stage1.scene';
 import { AdminService } from './scenes/AdminScene/admin.service';
 
 @Module({
-    imports: [
-        TelegrafModule.forRootAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                token: configService.get<string>('token') || '',
-                middlewares: [sessionMiddleware]
-            }),
-            inject: [ConfigService],
-        }),
-        BusinessModule
-    ],
-    providers: [TelegramUpdate, AdminScene, UserScene, AppointmentScene, AppointmentService, AdminService],
+  imports: [
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get<string>('token') || '',
+        middlewares: [sessionMiddleware],
+      }),
+      inject: [ConfigService],
+    }),
+    BusinessModule,
+  ],
+  providers: [TelegramUpdate, AdminScene, UserScene, AdminService],
 })
-export class TelegramModule { }
+export class TelegramModule {}
