@@ -108,9 +108,10 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
         stage,
         user.userId,
       );
-      ctx.telegram.sendMessage(
+      ctx.telegram.sendPhoto(
         user.chatId,
-        `Вы ответили правильно на ${count} из ${totalCount}`,
+        { source: 'src/assets/photo/result.png' },
+        { caption: `Вы ответили правильно на ${count} из ${totalCount}` },
       );
     });
   }
