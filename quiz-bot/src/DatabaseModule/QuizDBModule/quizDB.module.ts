@@ -1,15 +1,15 @@
 import { MongooseModule } from '@nestjs/mongoose';
-import { QuizService } from './quiz.service';
+import { QuizDBService } from './quizDB.service';
 import { Module } from '@nestjs/common';
-import { User, UserSchema } from '@schemas/user.schema';
+import { Quiz, QuizSchema } from '@schemas/quiz.schema';
 
 @Module({
   imports: [
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Quiz.name, schema: QuizSchema }]),
   ],
   controllers: [],
-  providers: [QuizService],
-  exports: [QuizService],
+  providers: [QuizDBService],
+  exports: [QuizDBService],
 })
 export class QuizModule {}

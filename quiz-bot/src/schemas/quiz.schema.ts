@@ -18,4 +18,4 @@ export class Quiz {
   correct: boolean;
 }
 
-export const UserSchema = SchemaFactory.createForClass(Quiz);
+export const QuizSchema = SchemaFactory.createForClass(Quiz);

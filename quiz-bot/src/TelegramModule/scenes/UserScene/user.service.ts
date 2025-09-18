@@ -4,11 +4,11 @@ https://docs.nestjs.com/providers#services
 
 import { Injectable } from '@nestjs/common';
 import { TelegrafContext } from 'src/common/interfaces/telegraf-context.interface';
-import { QuestionService } from 'src/BusinessModule/QuizModule/question.service';
+import { QuestionHelperService } from 'src/BusinessModule/QuizModule/questionHelper.service';
 
 @Injectable()
 export class UserService {
-  constructor(private _questionService: QuestionService) {}
+  constructor(private _questionHelperService: QuestionHelperService) {}
 
   parseCallback(ctx: TelegrafContext): {
     stage: string;
@@ -37,9 +37,9 @@ export class UserService {
 
   async workWithAnswer(userId: number, ctx: TelegrafContext) {
     const { stage, question, answer } = this.parseCallback(ctx);
-    const isCorrect = this._questionService.check(stage, question, answer);
-    const questionObject = this._questionService.getQuestion(stage, question);
-    this._questionService.saveQuestion(userId, stage, question, answer);
+    const isCorrect = this._questionHelperService.check(stage, question, answer);
+    const questionObject = this._questionHelperService.getQuestion(stage, question);
+    this._questionHelperService.saveQuestion(userId, stage, question, answer);
     await ctx.sendMessage(
       `<code>${isCorrect ? '✅ Правильно!' : '😑 Неправильно'}</code>
           
