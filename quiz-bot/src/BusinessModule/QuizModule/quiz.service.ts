@@ -59,7 +59,7 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
               inline_keyboard: [
                 question.answers.map((answer) => ({
                   text: answer.id,
-                  callback_data: `answer_${question.id}_${answer.id}`,
+                  callback_data: `answer_${this.stage}_${question.id}_${answer.id}`,
                 })),
               ],
             },

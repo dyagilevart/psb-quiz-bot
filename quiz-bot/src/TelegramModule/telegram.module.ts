@@ -11,6 +11,7 @@ import { BusinessModule } from 'src/BusinessModule/business.module';
 import { AdminScene } from './scenes/AdminScene/admin.scene';
 import { UserScene } from './scenes/UserScene/user.scene';
 import { AdminService } from './scenes/AdminScene/admin.service';
+import { UserService } from './scenes/UserScene/user.service';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { AdminService } from './scenes/AdminScene/admin.service';
     }),
     BusinessModule,
   ],
-  providers: [TelegramUpdate, AdminScene, UserScene, AdminService],
+  providers: [TelegramUpdate, AdminScene, UserScene, AdminService, UserService],
 })
 export class TelegramModule {}

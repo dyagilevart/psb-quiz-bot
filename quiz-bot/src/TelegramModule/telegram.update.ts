@@ -27,4 +27,13 @@ export class TelegramUpdate {
       ctx.scene.enter(SceneEnum.USER_CONSOLE);
     }
   }
+
+  @On('callback_query')
+  async onCallback(@Sender('id') id: number, @Ctx() ctx: TelegrafContext) {
+    if (await this.adminService.isAdmin(id)) {
+      ctx.scene.enter(SceneEnum.ADMIN_CONSOLE);
+    } else {
+      ctx.scene.enter(SceneEnum.USER_CONSOLE);
+    }
+  }
 }

@@ -22,6 +22,10 @@ export class AdminService {
         command: MenuEnum.START,
         description: menuButtonNames[MenuEnum.START],
       },
+      {
+        command: MenuEnum.STOP,
+        description: menuButtonNames[MenuEnum.STOP],
+      },
     ]);
     ctx.reply('Выберите нужную команду', {
       reply_markup: {
@@ -30,6 +34,10 @@ export class AdminService {
             {
               callback_data: MenuEnum.START,
               text: menuButtonNames[MenuEnum.START],
+            },
+            {
+              callback_data: MenuEnum.STOP,
+              text: menuButtonNames[MenuEnum.STOP],
             },
           ],
         ],
