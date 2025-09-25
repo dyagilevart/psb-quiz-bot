@@ -90,6 +90,7 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
     ctx.telegram.sendPhoto(winner.userId, {
       source: 'src/assets/photo/winner.png',
     });
+    ctx.reply(`Победитель выбран! ${winner.userId}`);
   }
 
   async sendResult(ctx: TelegrafContext, totalCount: number) {
