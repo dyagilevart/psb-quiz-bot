@@ -61,11 +61,12 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
           },
         );
         this.msqs.push(msg);
-        ctx.sendMessage(`Вопрос ${question.id}. ${question.text} отправлен ✅`);
       } catch (e) {
         console.error('Ошибка при отправке вопроса', e);
       }
     }
+
+    ctx.sendMessage(`Вопрос ${question.id}. ${question.text} отправлен ✅`);
   }
 
   async clearMessages(ctx: TelegrafContext) {
