@@ -23,8 +23,22 @@ export class UserService {
       .exec();
   }
 
-  async setUser(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = new this.userModel(createUserDto);
-    return await newUser.save();
+  async setUser(createUserDto: CreateUserDto): Promise<User | undefined> {
+    try {
+      const isExist = await this.userModel.findOne({
+        userId: createUserDto.userId,
+      });
+
+      if (isExist !== null) {
+        return isExist;
+      }
+
+      const newUser = new this.userModel(createUserDto);
+      return await newUser.save();
+    } catch {
+      console.error(
+        `Не удалось зарегистрировать пользователя ${createUserDto.userId}`,
+      );
+    }
   }
 }

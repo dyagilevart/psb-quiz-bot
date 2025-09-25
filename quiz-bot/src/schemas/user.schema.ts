@@ -5,7 +5,7 @@ export type PlaceDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   userId: number;
 
   @Prop({ required: true })
