@@ -41,7 +41,7 @@ export class QuizDBService {
       });
     }
 
-    rightAnswers = rightAnswers.sort((a, b) => a.count - b.count);
+    rightAnswers = rightAnswers.sort((a, b) => b.count - a.count);
 
     if (rightAnswers.length > 0) {
       return rightAnswers[0];
