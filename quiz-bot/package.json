@@ -25,6 +25,8 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/mongoose": "^11.0.1",
     "@nestjs/platform-express": "^10.0.0",
+    "chart.js": "^4.5.0",
+    "chartjs-node-canvas": "^5.0.0",
     "mongoose": "^8.12.1",
     "nestjs-telegraf": "^2.9.1",
     "reflect-metadata": "^0.2.0",
