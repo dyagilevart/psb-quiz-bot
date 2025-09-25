@@ -7,10 +7,11 @@ import { TelegrafContext } from 'src/common/interfaces/telegraf-context.interfac
 import { Question } from './types/question.type';
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { QuizDBService } from 'src/DatabaseModule/QuizDBModule/quizDB.service';
+import { generateRandomCode } from './helper/random';
 
 @Injectable()
 export class QuizService {
-  stage: string = '';
+  session: string;
   timers: NodeJS.Timeout[] = [];
   msqs: Message.TextMessage[] = [];
 
@@ -20,8 +21,7 @@ export class QuizService {
   ) {}
 
   start(ctx: TelegrafContext) {
-    if (this.stage === '') {
-      this.stage = '1';
+      this.session = generateRandomCode(4);
       let current = 0;
       while (current <= questions1.length) {
         this.timers.push(
@@ -31,7 +31,7 @@ export class QuizService {
               if (current < questions1.length) {
                 this.sendQuestion(ctx, questions1, current);
               } else {
-                this.sendResult(ctx, this.stage, questions1.length);
+                this.sendResult(ctx, questions1.length);
               }
             },
             current * 30000,
@@ -40,7 +40,6 @@ export class QuizService {
         );
         current++;
       }
-    }
   }
 
   stop() {
@@ -70,7 +69,7 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
               inline_keyboard: [
                 question.answers.map((answer) => ({
                   text: answer.id,
-                  callback_data: `answer_${this.stage}_${question.id}_${answer.id}`,
+                  callback_data: `answer_${question.id}_${answer.id}`,
                 })),
               ],
             },
@@ -101,11 +100,10 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
     return;
   }
 
-  async sendResult(ctx: TelegrafContext, stage: string, totalCount: number) {
+  async sendResult(ctx: TelegrafContext, totalCount: number) {
     const users = await this.userService.getActiveUsers();
     users.forEach(async (user) => {
       const count = await this.quizDBService.getRightAnswersCount(
-        stage,
         user.userId,
       );
       ctx.telegram.sendPhoto(

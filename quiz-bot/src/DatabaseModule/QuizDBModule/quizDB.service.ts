@@ -18,7 +18,7 @@ export class QuizDBService {
     return await newAnswer.save();
   }
 
-  async getRightAnswersCount(stage: string, userId: number) {
-    return (await this.quizModel.find({ stage, userId, correct: true })).length;
+  async getRightAnswersCount(userId: number) {
+    return (await this.quizModel.find({userId, correct: true })).length;
   }
 }

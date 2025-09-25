@@ -11,7 +11,6 @@ export class UserService {
   constructor(private _questionHelperService: QuestionHelperService) {}
 
   parseCallback(ctx: TelegrafContext): {
-    stage: string;
     question: string;
     answer: string;
   } {
@@ -20,14 +19,13 @@ export class UserService {
       throw new Error('Ошибка: ответ не распознан');
     }
 
-    const regex = /^answer_(\d+)_(\d+)_(\d+)$/;
+    const regex = /^answer_(\d+)_(\d+)$/;
     const match = ctx.callbackQuery.data.match(regex);
 
     if (match) {
       return {
-        stage: match[1],
-        question: match[2],
-        answer: match[3],
+        question: match[1],
+        answer: match[2],
       };
     } else {
       ctx.answerCbQuery('Ошибка: ответ не распознан');
@@ -37,18 +35,16 @@ export class UserService {
 
   async workWithAnswer(userId: number, ctx: TelegrafContext) {
     try {
-      const { stage, question, answer } = this.parseCallback(ctx);
+      const { question, answer } = this.parseCallback(ctx);
       await ctx.deleteMessage(ctx.msgId);
       const isCorrect = this._questionHelperService.check(
-        stage,
         question,
         answer,
       );
       const questionObject = this._questionHelperService.getQuestion(
-        stage,
         question,
       );
-      this._questionHelperService.saveQuestion(userId, stage, question, answer);
+      this._questionHelperService.saveQuestion(userId, question, answer);
 
       await ctx.sendMessage(
         `<code>${isCorrect ? '✅ Правильно!' : '😑 Неправильно'}</code>
