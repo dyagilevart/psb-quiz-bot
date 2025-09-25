@@ -57,14 +57,40 @@ export class AdminService {
         return MenuEnum.START;
       case data.includes(MenuEnum.STOP):
         return MenuEnum.STOP;
+      case data.includes(MenuEnum.NEXT):
+        return MenuEnum.NEXT;
 
       default:
         throw new Error('Ошибка: неизвестная команда');
     }
   }
 
+  parseQuestion(ctx: TelegrafContext): {session: string, nextQuestion: number} {
+    if (!ctx.callbackQuery || !('data' in ctx.callbackQuery)) {
+      ctx.answerCbQuery('Ошибка: ответ не распознан');
+      throw new Error('Ошибка: ответ не распознан');
+    }
+
+    const regex = /^gonext_(.{4})_(\d+)$/;
+    const match = ctx.callbackQuery.data.match(regex);
+
+    if (match) {
+      return {
+        session: match[1],
+        nextQuestion: Number(match[2]),
+      };
+    } else {
+      ctx.answerCbQuery('Ошибка: ответ не распознан');
+      throw new Error('Ошибка: ответ не распознан');
+    }
+  }
+
   start(ctx: TelegrafContext) {
     this._quizService.start(ctx);
+  }
+
+  next(ctx: TelegrafContext, nextQuestion: number) {
+    this._quizService.goNext(ctx, nextQuestion);
   }
 
   stop() {

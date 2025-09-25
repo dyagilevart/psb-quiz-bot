@@ -28,7 +28,7 @@ export class ChartService {
     const configuration: ChartConfiguration = {
       type: 'bar',
       data: {
-        labels: values.map((_, index) => `Column ${index + 1}`),
+        labels: values.map((_, index) => `${index + 1}`),
         datasets: [{
           label: 'Values',
           data: values,

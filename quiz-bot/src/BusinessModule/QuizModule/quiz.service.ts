@@ -1,45 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/DatabaseModule/UserModule/user.service';
-import { questions as questions1 } from './questions/questions.stage1';
-import { questions as questions2 } from './questions/questions.stage2';
-import { questions as questions3 } from './questions/questions.stage3';
+import { questions } from './questions/questions.stage1';
 import { TelegrafContext } from 'src/common/interfaces/telegraf-context.interface';
 import { Question } from './types/question.type';
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { QuizDBService } from 'src/DatabaseModule/QuizDBModule/quizDB.service';
 import { generateRandomCode } from './helper/random';
+import { ChartService } from 'src/ChartModule/chart.service';
+import { Options } from 'supertest';
 
 @Injectable()
 export class QuizService {
   session: string;
+  current = 0;
   timers: NodeJS.Timeout[] = [];
   msqs: Message.TextMessage[] = [];
 
   constructor(
     private userService: UserService,
     private quizDBService: QuizDBService,
+    private chartService: ChartService,
   ) {}
 
   start(ctx: TelegrafContext) {
-      this.session = generateRandomCode(4);
-      let current = 0;
-      while (current <= questions1.length) {
-        this.timers.push(
-          setTimeout(
-            async (current) => {
-              await this.clearMessages(ctx);
-              if (current < questions1.length) {
-                this.sendQuestion(ctx, questions1, current);
-              } else {
-                this.sendResult(ctx, questions1.length);
-              }
-            },
-            current * 30000,
-            current,
-          ),
-        );
-        current++;
-      }
+    this.session = generateRandomCode(4);
+    this.goNext(ctx, this.current);
   }
 
   stop() {
@@ -103,14 +88,59 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
   async sendResult(ctx: TelegrafContext, totalCount: number) {
     const users = await this.userService.getActiveUsers();
     users.forEach(async (user) => {
-      const count = await this.quizDBService.getRightAnswersCount(
-        user.userId,
-      );
+      const count = await this.quizDBService.getRightAnswersCount(user.userId);
       ctx.telegram.sendPhoto(
         user.chatId,
         { source: 'src/assets/photo/result.png' },
         { caption: `Вы ответили правильно на ${count} из ${totalCount}` },
       );
     });
+  }
+
+  async generateStatistic(question: number) {
+    const options = questions[question].answers.map((answer) => answer.id);
+    const results: number[] = [];
+    for (let i = 0; i < options.length; i++) {
+      results.push(
+        await this.quizDBService.getStatistic(options[i], questions[question].id),
+      );
+    }
+    const colorScheme: string[] = questions[question].answers.map((answer) =>
+      answer.id === questions[question].solution.id ? '#51cf66' : '#4facfe',
+    );
+
+    return await this.chartService.generateStatistic(results, {
+      colorScheme,
+    });
+  }
+
+  goNext(ctx: TelegrafContext, question: number) {
+    if (question < questions.length) {
+      this.sendQuestion(ctx, questions, question);
+      this.timers.push(
+        setTimeout(async () => {
+          await this.clearMessages(ctx);
+          const chart = await this.generateStatistic(question);
+          ctx.replyWithPhoto(
+            { source: chart },
+            {
+              caption: `Вопрос ${questions[question].id}. ${questions[question].text} завершен.`,
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: 'Идем дальше?',
+                      callback_data: `gonext_${this.session}_${question + 1}`,
+                    },
+                  ],
+                ],
+              },
+            },
+          );
+        }, 30000),
+      );
+    } else {
+      this.sendResult(ctx, questions.length);
+    }
   }
 }

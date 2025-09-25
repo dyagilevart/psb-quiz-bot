@@ -19,6 +19,10 @@ export class QuizDBService {
   }
 
   async getRightAnswersCount(userId: number) {
-    return (await this.quizModel.find({userId, correct: true })).length;
+    return (await this.quizModel.find({ userId, correct: true })).length;
+  }
+
+  async getStatistic(option: string, question: string) {
+    return (await this.quizModel.find({ id: question, answer: option })).length;
   }
 }

@@ -31,6 +31,10 @@ export class AdminScene {
     if (this._adminService.parseCallback(ctx) === MenuEnum.START) {
       this._adminService.start(ctx);
     }
+    if (this._adminService.parseCallback(ctx) === MenuEnum.NEXT) {
+      const nextQuestion = this._adminService.parseQuestion(ctx);
+      this._adminService.next(ctx, nextQuestion.nextQuestion);
+    }
     if (this._adminService.parseCallback(ctx) === MenuEnum.STOP) {
       this._adminService.stop();
     }
