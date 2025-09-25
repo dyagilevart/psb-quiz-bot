@@ -17,16 +17,6 @@ export class AdminService {
   }
 
   renderMenu(ctx: TelegrafContext) {
-    ctx.telegram.setMyCommands([
-      {
-        command: MenuEnum.START,
-        description: menuButtonNames[MenuEnum.START],
-      },
-      {
-        command: MenuEnum.STOP,
-        description: menuButtonNames[MenuEnum.STOP],
-      },
-    ]);
     ctx.reply('Выберите нужную команду', {
       reply_markup: {
         inline_keyboard: [
