@@ -7,7 +7,6 @@ import { Message } from 'telegraf/typings/core/types/typegram';
 import { QuizDBService } from 'src/DatabaseModule/QuizDBModule/quizDB.service';
 import { generateRandomCode } from './helper/random';
 import { ChartService } from 'src/ChartModule/chart.service';
-import { Options } from 'supertest';
 
 @Injectable()
 export class QuizService {
@@ -85,6 +84,13 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
     return;
   }
 
+  async sendWinner(ctx: TelegrafContext) {
+    const winner = await this.quizDBService.getWinner();
+    ctx.telegram.sendPhoto(winner.userId, {
+      source: 'src/assets/photo/winner.png',
+    });
+  }
+
   async sendResult(ctx: TelegrafContext, totalCount: number) {
     const users = await this.userService.getActiveUsers();
     users.forEach(async (user) => {
@@ -102,7 +108,10 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
     const results: number[] = [];
     for (let i = 0; i < options.length; i++) {
       results.push(
-        await this.quizDBService.getStatistic(options[i], questions[question].id),
+        await this.quizDBService.getStatistic(
+          options[i],
+          questions[question].id,
+        ),
       );
     }
     const colorScheme: string[] = questions[question].answers.map((answer) =>
@@ -114,7 +123,7 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
     });
   }
 
-  goNext(ctx: TelegrafContext, question: number) {
+  async goNext(ctx: TelegrafContext, question: number) {
     if (question < questions.length) {
       this.sendQuestion(ctx, questions, question);
       this.timers.push(
@@ -140,7 +149,8 @@ ${question.answers.map((answer) => `${answer.id}. ${answer.text}`).join('\n')}`,
         }, 30000),
       );
     } else {
-      this.sendResult(ctx, questions.length);
+      await this.sendResult(ctx, questions.length);
+      await this.sendWinner(ctx);
     }
   }
 }
